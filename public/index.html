@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度废话文学生成器 - 将无聊话题转化为形式严谨但内容空洞的幽默文本</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'official-blue': '#2D3748',
+                        'warning-red': '#E53E3E',
+                        'neon-yellow': '#F6E05E',
+                        'steam-pink': '#FF69B4',
+                        'cyber-green': '#00FF41'
+                    },
+                    animation: {
+                        'typewriter': 'typewriter 2s steps(40) 1s 1 normal both',
+                        'blink': 'blink 1s steps(1) infinite',
+                        'conveyor': 'conveyor 3s linear infinite',
+                        'glitch': 'glitch 0.3s infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        typewriter: {
+                            '0%': { width: '0' },
+                            '100%': { width: '100%' }
+                        },
+                        blink: {
+                            '0%, 50%': { borderColor: 'transparent' },
+                            '51%, 100%': { borderColor: 'currentColor' }
+                        },
+                        conveyor: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        },
+                        glitch: {
+                            '0%, 100%': { transform: 'translate(0)' },
+                            '20%': { transform: 'translate(-2px, 2px)' },
+                            '40%': { transform: 'translate(-2px, -2px)' },
+                            '60%': { transform: 'translate(2px, 2px)' },
+                            '80%': { transform: 'translate(2px, -2px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #2D3748 0%, #4A5568 100%);
+            min-height: 100vh;
+        }
+
+        .official-header {
+            background: linear-gradient(90deg, #E53E3E 0%, #C53030 100%);
+            border-bottom: 3px solid #F6E05E;
+        }
+
+        .input-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid #E53E3E;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .generation-area {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #F6E05E;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .typewriter-text {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            text-indent: 2em;
+        }
+
+        /* Markdown渲染样式 */
+        .markdown-content {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.8;
+            color: white;
+        }
+
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+            color: #F6E05E;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+
+        .markdown-content h1 {
+            font-size: 1.5em;
+        }
+
+        .markdown-content h2 {
+            font-size: 1.3em;
+        }
+
+        .markdown-content h3 {
+            font-size: 1.1em;
+        }
+
+        .markdown-content p {
+            margin-bottom: 1em;
+            text-indent: 2em;
+        }
+
+        .markdown-content ul,
+        .markdown-content ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+
+        .markdown-content li {
+            margin-bottom: 0.5em;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid #F6E05E;
+            padding-left: 1em;
+            margin: 1em 0;
+            font-style: italic;
+            color: #E2E8F0;
+        }
+
+        .markdown-content code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.2em 0.4em;
+            border-radius: 0.25em;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .markdown-content pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1em;
+            border-radius: 0.5em;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .markdown-content strong {
+            color: #F6E05E;
+            font-weight: bold;
+        }
+
+        .markdown-content em {
+            color: #E2E8F0;
+            font-style: italic;
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 2px solid #F6E05E;
+            margin: 2em 0;
+        }
+
+        .density-1 {
+            background: linear-gradient(45deg, #F7FAFC, #EDF2F7);
+        }
+
+        .density-2 {
+            background: linear-gradient(45deg, #FEF5E7, #FED7AA);
+        }
+
+        .density-3 {
+            background: linear-gradient(45deg, #FED7D7, #FEB2B2);
+        }
+
+        .density-4 {
+            background: linear-gradient(45deg, #F6E05E, #ECC94B);
+        }
+
+        .density-5 {
+            background: linear-gradient(45deg, #00FF41, #FF69B4);
+            animation: glitch 0.3s infinite;
+        }
+
+        .conveyor-belt {
+            background: repeating-linear-gradient(90deg,
+                    #2D3748 0px,
+                    #2D3748 20px,
+                    #4A5568 20px,
+                    #4A5568 40px);
+        }
+
+        .briefcase {
+            animation: conveyor 3s linear infinite;
+        }
+
+        .achievement-badge {
+            background: linear-gradient(45deg, #F6E05E, #ECC94B);
+            border: 2px solid #E53E3E;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .steam-wave {
+            background: linear-gradient(45deg, #FF69B4, #00FF41, #F6E05E, #FF69B4);
+            background-size: 400% 400%;
+            animation: steamWave 4s ease infinite;
+        }
+
+        @keyframes steamWave {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .print-sound {
+            animation: printSound 0.1s ease-in-out;
+        }
+
+        @keyframes printSound {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                content: '';
+            }
+
+            40% {
+                content: '.';
+            }
+
+            60% {
+                content: '..';
+            }
+
+            80%,
+            100% {
+                content: '...';
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-official-blue text-white">
+    <!-- 官方红头文件样式头部 -->
+    <header class="official-header py-4 px-6">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-warning-red text-2xl font-bold">废</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">深度废话文学生成器</h1>
+                        <p class="text-yellow-200 text-sm">将无聊话题转化为形式严谨但内容空洞的幽默文本</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-white text-sm">版本号：v1.0.0</div>
+                    <div class="text-yellow-200 text-xs">深度废话文学研究院出品</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <!-- 输入面板 -->
+        <section class="input-panel p-6 mb-8">
+            <h2 class="text-xl font-bold text-official-blue mb-6 flex items-center">
+                <span class="text-2xl mr-2">📝</span>
+                输入面板
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 主题输入框 -->
+                <div>
+                    <label class="block text-official-blue font-medium mb-2">主题输入</label>
+                    <input type="text" id="topicInput" placeholder="请输入一个正经话题，比如'数字化转型'"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-warning-red focus:outline-none transition-colors text-black">
+                </div>
+
+                <!-- 废话强度调节器 -->
+                <div>
+                    <label class="block text-official-blue font-medium mb-2">
+                        废话强度调节器
+                        <span id="densityValue" class="text-warning-red font-bold">3</span>级
+                    </label>
+                    <input type="range" id="densitySlider" min="1" max="5" value="3"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                    <div class="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>轻度</span>
+                        <span>重度</span>
+                    </div>
+                </div>
+
+                <!-- 文体选择器 -->
+                <div>
+                    <label class="block text-official-blue font-medium mb-2">文体选择</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="style" value="学术论文" checked class="mr-2">
+                            <span class="text-sm text-black">学术论文</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="style" value="领导讲话" class="mr-2">
+                            <span class="text-sm text-black">领导讲话</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="style" value="产品说明" class="mr-2">
+                            <span class="text-sm text-black">产品说明</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="style" value="星座运势" class="mr-2">
+                            <span class="text-sm text-black">星座运势</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="flex flex-wrap gap-4 mt-6">
+                <button id="generateBtn"
+                    class="bg-warning-red hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center">
+                    <span class="mr-2">🎪</span>
+                    深度废话
+                </button>
+
+                <label
+                    class="flex items-center bg-neon-yellow text-official-blue font-bold py-3 px-6 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" id="nestedMode" class="mr-2">
+                    <span class="mr-2">🎭</span>
+                    套娃模式
+                </label>
+
+                <button id="exportBtn"
+                    class="bg-official-blue hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center"
+                    disabled>
+                    <span class="mr-2">📄</span>
+                    导出PDF
+                </button>
+            </div>
+        </section>
+
+        <!-- 生成区域 -->
+        <section class="generation-area p-6">
+            <h2 class="text-xl font-bold text-neon-yellow mb-6 flex items-center">
+                <span class="text-2xl mr-2">🎪</span>
+                生成区
+            </h2>
+
+            <!-- 加载动画 -->
+            <div id="loadingAnimation" class="hidden text-center py-12">
+                <div class="conveyor-belt h-4 rounded-lg mb-4 relative overflow-hidden">
+                    <div
+                        class="briefcase absolute top-0 left-0 w-8 h-8 bg-neon-yellow rounded flex items-center justify-center">
+                        <span class="text-official-blue text-sm">📁</span>
+                    </div>
+                </div>
+                <p class="text-neon-yellow loading-dots">正在生成深度废话文学</p>
+            </div>
+
+            <!-- 生成结果显示 -->
+            <div id="resultArea" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-neon-yellow">生成结果</h3>
+                    <div class="flex items-center space-x-4">
+                        <span id="wordCount" class="text-sm text-gray-300"></span>
+                        <div id="achievements" class="flex space-x-2"></div>
+                    </div>
+                </div>
+
+                <div id="contentDisplay" class="bg-black bg-opacity-50 p-6 rounded-lg border border-neon-yellow">
+                    <div id="typewriterText" class="markdown-content"></div>
+                </div>
+            </div>
+
+            <!-- 套娃模式结果 -->
+            <div id="nestedResults" class="hidden mt-8">
+                <h3 class="text-lg font-bold text-neon-yellow mb-4">套娃模式结果</h3>
+                <div id="nestedContent" class="space-y-4"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 音效控制 -->
+    <audio id="printSound" preload="auto">
+        <source
+            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
+            type="audio/wav">
+    </audio>
+    <audio id="pageSound" preload="auto">
+        <source
+            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
+            type="audio/wav">
+    </audio>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
