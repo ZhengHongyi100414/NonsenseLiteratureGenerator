@@ -29,7 +29,7 @@
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/your-username/nonsense-literature-generator.git
+git clone https://github.com/ZhengHongyi100414/NonsenseLiteratureGenerator.git
 cd nonsense-literature-generator
 ```
 
